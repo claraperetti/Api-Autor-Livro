@@ -12,7 +12,6 @@ class UserTest(HttpUser):
 
     @task
     def fluxo(self):
-        # ✅ POST correto
         response = self.client.post("/auth/register", json={
             "email": gerar_email(),
             "password": "123456"
@@ -20,6 +19,9 @@ class UserTest(HttpUser):
 
         if response.status_code == 200:
             user = response.json()
+            api_key = user["apiKey"]
 
-            # ✅ GET correto
-            self.client.get("/auth/users")
+            self.client.get(
+                "/auth/users",
+                headers={"x-api-key": api_key}
+            )
