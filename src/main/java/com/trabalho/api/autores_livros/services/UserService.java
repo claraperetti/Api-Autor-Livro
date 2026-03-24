@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -15,8 +16,18 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    private String generateApiKey(){
+        return UUID.randomUUID().toString();
+    }
+
     public ResponseUser createUser(RequestUser userContent){
+        //evitar email duplicado
+        if(userRepository.findByEmail(userContent.email()).isPresent()){
+            throw new RuntimeException("E-mail ja cadastrado em outro user");
+        }
         User user = new User(userContent.email(), userContent.password());
+        user.setApiKey(generateApiKey());
+
         User savedUser = userRepository.save(user);
 
         return new ResponseUser(savedUser.getEmail(), savedUser.getId(), savedUser.getApiKey());
