@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
@@ -20,9 +22,10 @@ public class Livro {
     private Integer ano;
 
     @ManyToOne
-    @JoinColumn(name = "autor_id")
-    @NotNull(message = "O autor é obrigatório")
+    @JoinColumn(name = "autor_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Autor autor;
-
 }
+
+
 
